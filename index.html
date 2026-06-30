@@ -587,7 +587,7 @@ function App() {
 
       setAiMessages(prev => [...prev, { role: 'assistant', text: aiResponseText }]);
     } catch (error) {
-      setAiMessages(prev => [...prev, { role: 'assistant', text: 'Не удалось связаться с ИИ. Попробуйте еще раз через мгновение.' }]);
+      setAiMessages(prev => [...prev, { role: 'assistant', text: 'Не удалось связаться с увй. Попробуйте еще раз через мгновение.' }]);
     } finally {
       setIsAiLoading(false);
     }
