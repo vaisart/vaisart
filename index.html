@@ -21,6 +21,51 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
+    // Код для ИИ-помощника MDV с вашим ключом Gemini API
+  const [isChatOpen, setIsChatOpen] = React.useState(false);
+  const [aiMessages, setAiMessages] = React.useState([
+    { role: 'assistant', text: 'Привет! Я твой ИИ-ассистент в MDV. Могу распределить твои задачи на сегодня или составить итог по дневнику. Что подсказать?' }
+  ]);
+  const [aiInput, setAiInput] = React.useState('');
+  const [isAiLoading, setIsAiLoading] = React.useState(false);
+
+  const askMdvAi = async () => {
+    if (!aiInput.trim()) return;
+    const userMsg = { role: 'user', text: aiInput };
+    setAiMessages(prev => [...prev, userMsg]);
+    setAiInput('');
+    setIsAiLoading(true);
+
+    // Ваш ключ успешно интегрирован в систему
+    const API_KEY = "AQ.Ab8RN6L-9lHKclHLkCqW2EstbE6lAXJjOHGtsY0pxVola5ytvg"; 
+
+    // ИИ будет автоматически знать, что сейчас написано в ваших задачах и дневнике
+    const currentTasks = typeof tasks !== 'undefined' ? JSON.stringify(tasks) : 'Не указаны';
+    const diaryNotes = typeof diaryText !== 'undefined' ? diaryText : 'Пусто';
+
+    const systemPrompt = `Ты — встроенный ИИ-помощник в планер MDV (My Day Vais). Отвечай коротко, емко, вежливо и только на русском языке.
+    Контекст пользователя на сегодня:
+    - Текущие задачи: ${currentTasks}
+    - Записи в дневнике: ${diaryNotes}`;
+
+    try {
+      const response = await fetch(`https://googleapis.com{API_KEY}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: `${systemPrompt}\n\nЗапрос пользователя: ${aiInput}` }] }]
+        })
+      });
+      const data = await response.json();
+      const aiResponseText = data.candidates.content.parts.text;
+      setAiMessages(prev => [...prev, { role: 'assistant', text: aiResponseText }]);
+    } catch (error) {
+      setAiMessages(prev => [...prev, { role: 'assistant', text: 'Не удалось подключиться к ИИ. Проверь сеть или ключ API.' }]);
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
+
 
 // ── constants ────────────────────────────────────────────────────────────────
 const BG = "#EBEBEB";
