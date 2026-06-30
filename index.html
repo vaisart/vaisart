@@ -580,7 +580,7 @@ function App() {
       const data = await response.json();
       
       // Извлекаем чистый текст ответа нейросети
-      let aiResponseText = data[0]?.generated_text || "Ой, что-то пошло не так.";
+      let aiResponseText = data[0]?.generated_text || "Ой,делай сам я занят";
       if (aiResponseText.includes("<|im_start|>assistant\n")) {
         aiResponseText = aiResponseText.split("<|im_start|>assistant\n").pop().replace("<|im_end|>", "").trim();
       }
